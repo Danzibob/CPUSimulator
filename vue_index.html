@@ -1,0 +1,179 @@
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js" integrity="sha256-kXTEJcRFN330VirZFl6gj9+UM6gIKW195fYZeR3xDhc=" crossorigin="anonymous"></script>
+    <script src="SimpleCPU.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="app.css">
+</head>
+    
+<body>
+    <div id="app">
+
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="sim-tab" data-bs-toggle="tab" data-bs-target="#sim" type="button" role="tab" aria-controls="sim" aria-selected="true">
+                    Simulator View
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="design-tab" data-bs-toggle="tab" data-bs-target="#design" type="button" role="tab" aria-controls="design" aria-selected="false">
+                    Design View
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+            <!-- This is the first tab, containing the simulator's readout and controls -->
+            <div class="container tab-pane fade show active" id="sim" role="tabpanel" aria-labelledby="sim-tab">
+                <div class="row">
+                    <div id="IDE" class="col">
+                        <div id="controls">
+                            <button type="button" class="btn btn-secondary" id="compile" v-on:click="loadProgram">Compile</button>
+                            <button type="button" class="btn btn-secondary" id="step" v-on:click="step">Step</button>
+                            <button type="button" class="btn btn-secondary" id="run" v-on:click="run">Run</button>
+                        </div>
+                        <div id="editor">
+                            <pre id="lineNums"><template v-for="i in lineNums"><span class="bp" v-bind:class="bpts.indexOf(i) > -1 ? 'isBP' : ''" v-on:click="toggle(i)">{{i}}</span><br></template></pre>
+                            <textarea id="labels" v-model="labels" cols="12" rows="4096" class="font-monospace"></textarea>
+                            <textarea id="code" v-model="code" cols="24" rows="4096" class="font-monospace"></textarea>
+                        </div>
+                    </div>
+
+                    <div id="rightPane" class="col">
+                        
+                        <div id="controls">
+                            <button type="button" class="btn btn-secondary" v-on:click="reset">Reset CPU</button>
+                        </div>
+
+                        <transition name="slide-fade" mode="out-in">
+                        <div id="memory">
+                            <pre id="mem" onscroll="scrollMem"
+                                ><template v-for="(m,i) in mem.slice(memPos, memPos+64)"
+                                >{{(i+"").padStart(4,' ') + " " + (i == PC ? '>' : '|') + " " + hx(m)  + "\n"}}</template></pre>
+                            <h3>Stack</h3>
+                            <pre id="stack"><template v-for="(m,i) in mem.slice(4000).reverse()">{{(4095-i + "").padStart(4,' ') + " " + ((4095-i) == SP ? '>' : '|') + " " + (m+"").padStart(4,' ') + "\n"}}</template></pre>
+                        </div>
+                        </transition>
+
+                        <div id="registers">
+                            <!-- Program Counter and Stack pointer are special registers -->
+                            <!-- Then there's an unknown amount of flags (bool) -->
+                            <!-- Then there's an unknown amount of general purpose registers -->
+                            <table id="regTable" class="font-monospace">
+                                <tr>
+                                    <td>PC: {{hx(PC)}} ({{PC}})</td>
+                                    <td>SP: {{hx(SP)}} ({{SP}})</td>
+                                </tr>
+                                <tr>
+                                    <td>Flags: </td>
+                                    <td>{{flags.join(" ")}} <br> {{flagVals.join(" ")}}</td>
+                                </tr>
+                                <template v-for="n in Math.ceil(regs.length/2)">
+                                    <tr>
+                                        <td>{{(n*2-2) in regAliases ? regAliases[(n*2-2)] : "R"+(n*2-2)}}: {{hx(regs[(n*2-2)])}} ({{regs[(n*2-2)]}})</td>
+                                        <td>{{(n*2-1) in regAliases ? regAliases[(n*2-1)] : "R"+(n*2-1)}}: {{hx(regs[(n*2-1)])}} ({{regs[(n*2-1)]}})</td>
+                                    </tr>
+                                </template>
+                            </table>
+                        </div>
+                        <div id="widgets">
+                            <h3 style="padding-left: 20px;">Peripherals</h3>
+                            <div class="widget"></div>
+                            <div class="widget"></div>
+                        </div>
+                    </div>
+                </div>  
+            </div>
+
+            <!-- This is the second tab, with controls for designing the processor's instruction set -->
+            <div class="container tab-pane fade" id="design" role="tabpanel" aria-labelledby="design-tab">
+                <div class="row" style="padding-top: 10px;">
+
+                    <!-- Column to contain the current list of instructions and select  -->
+                    <div class="col">
+                        <!-- Existing instructions -->
+                        <div class="row">
+                            <ul style="list-style: none">
+                                <template v-for="(ins,i) in instructions">
+                                    <li v-on:click="selectInstruction"
+                                        v-bind:class="{selected: i == selectedInstruction}"
+                                        v-bind:value="i"
+                                    >{{ins.names[0]}}</li>
+                                </template>
+                            </ul>
+                        </div>
+                        <!-- Add new instruction -->
+                        <div class="row">
+                            <button class="btn btn-success" 
+                                    style="margin: 10px; width: calc( 100% - 20px );"
+                                    onclick="alert('not implemented!')"
+                            >Add new Instruction</button>
+                        </div>
+                    </div>
+
+                    <!-- Column to contain the instruction editor -->
+                    <div class="col">
+                        <!-- Op code entry -->
+                        <div class="row">
+                            <h2>{{currentInstruction.names[0]}}</h2>
+                            <div style="white-space:nowrap">
+                                <label for="opCodeInput">OP Code:</label>
+                                <input type="text" id="opCodeInput" v-model="currentInstruction.format.op"/>
+                            </div>
+                        </div>
+
+                        <!-- Instruction Format Box -->
+                        <div class="row">
+                            <!-- Some fancy flexboxy shizz -->
+                            <div style="height: 40px; background-color: royalblue; margin: 10px">
+                                {{currentInstruction.format.mask}}
+                            </div>
+                        </div>
+
+                        <!-- Instruction arguments readout -->
+                        <div class="row">
+                            <!-- Row for each arg section -->
+                            <!-- Length, min-max, a colour or smth idk -->
+                            <table style="margin:10px">
+                                <template v-for="(val,k) in args">
+                                    <tr>
+                                        <td>{{k}}</td>
+                                        <td>{{val.width}} bits</td>
+                                        <td>{{val.max}}</td>
+                                        <td><input type="text" value="" style="width:30px"></td>
+                                    </tr>
+                                </template>
+                            </table>
+
+                        </div>
+                        <hr>
+                        <!-- RTL Entry -->
+                        <div class="row">
+                            <textarea style="margin:10px; font-family: monospace;" rows="8" v-model="currentInstruction.rtl"></textarea>
+                        </div>
+                        <!-- Save button -->
+                        <div class="row">
+                            <button class="btn btn-primary" 
+                                    style="margin: 10px; width: 100%;"
+                                    onclick="alert('not implemented!')"
+                            >Update Instruction</button>
+                        </div>
+                    </div>
+
+                    <!-- Column to contain common argument blocks -->
+                    <div class="col">
+                        <!-- Some sorta v-for or smth -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Post body script imports -->
+    <script src="SimpleCPU.js"></script>
+    <script src="bundle.js"></script>
+    <script src="CPU2.js"></script>
+    <script src="vue_script.js"></script>
+</body>
+    

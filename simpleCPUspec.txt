@@ -1,0 +1,161 @@
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# MOVE    0    0    0    0    Rd   Rd   X    X    K    K    K    K    K    K    K    K      
+# RTL : Rd <- (IR(7))8 || IR(7:0)  
+# Example : move RA 11
+ 
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# ADD     0    0    0    1    Rd   Rd   X    X    K    K    K    K    K    K    K    K      
+# RTL : Rd <- Rd + (IR(7))8 || IR(7:0)  
+# Example : add RB 12
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# SUB     0    0    1    0    Rd   Rd   X    X    K    K    K    K    K    K    K    K      
+# RTL : Rd <- Rd + (IR(7))8 || IR(7:0)  
+# Example : sub RC 23
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# AND     0    0    1    1    Rd   Rd   X    X    K    K    K    K    K    K    K    K
+# RTL : Rd <- Rd & (0)8 || IR(7:0)  
+# Example : and RD 34
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# LOAD    0    1    0    0    A    A    A    A    A    A    A    A    A    A    A    A
+# RTL : RA <- M[AAA]
+# Example : load RA 100
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# STORE   0    1    0    1    A    A    A    A    A    A    A    A    A    A    A    A
+# RTL : M[AAA] <- RA
+# Example : store RA 101
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# ADDM    0    1    1    0    A    A    A    A    A    A    A    A    A    A    A    A
+# RTL : RA <- RA + M[AAA]
+# Example : addm RA 102
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# SUBM    0    1    1    1    A    A    A    A    A    A    A    A    A    A    A    A
+# RTL : RA <- RA - M[AAA]
+# Example : subm RA 103
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# JUMPU   1    0    0    0    A    A    A    A    A    A    A    A    A    A    A    A
+# RTL : PC <- AAA
+# Example : jump 200
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# JUMPZ   1    0    0    1    A    A    A    A    A    A    A    A    A    A    A    A
+# RTL : if Z=1
+#         PC <- AAA
+#       else
+#         PC <- PC+1
+# Example : jumpz 201
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# JUMPNZ  1    0    1    0    A    A    A    A    A    A    A    A    A    A    A    A
+# RTL : if Z=0
+#         PC <- AAA
+#       else
+#         PC <- PC+1
+# Example : jumpnz 202
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# JUMPC   1    0    1    1    A    A    A    A    A    A    A    A    A    A    A    A  -- NOT IMPLEMENTED
+# RTL : if C=1
+#         PC <- AAA
+#       else
+#         PC <- PC+1
+# Example jumpc 203
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# CALL    1    1    0    0    A    A    A    A    A    A    A    A    A    A    A    A
+# RTL : M[SP] <- PC
+#       PC <- AAA
+#       SP <= SP-1
+# Example call 300
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# OR      1    1    0    1    Rd   Rd   X    X    K    K    K    K    K    K    K    K  -- NOT IMPLEMENTED
+# RTL : Rd <- Rd | (0)8 || IR(7:0)
+# Example : or RB 10
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# XOP1    1    1    1    0    Rd   Rd   X    X    K    K    K    K    K    K    K    K  -- NOT IMPLEMENTED
+# student defined, but uses the immediate addressing mode
+# Example : xop1 RC 11
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# RET     1    1    1    1    X    X    X    X    X    X    X    X    0    0    0    0
+# RTL : SP <- SP+1
+#       PC <- M[SP]
+# Example : ret
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# MOVE    1    1    1    1    Rd   Rd   Rs   Rs   X    X    X    X    0    0    0    1
+# RTL : Rd <- Rs
+# Example : move RA RB
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# LOAD    1    1    1    1    Rd   Rd   Rs   Rs   X    X    X    X    0    0    1    0
+# RTL : Rd <- m[Rs]
+# Example : load RB (RC)
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# STORE   1    1    1    1    Rd   Rd   Rs   Rs   X    X    X    X    0    0    1    1  
+# RTL : m[Rd] <- Rs
+# Example : store RC (RD)
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# ROL     1    1    1    1    Rsd  Rsd  X    X    X    X    X    1    0    1    0    0
+# RTL : Rsd <- Rsd(14:0) || Rsd(15)
+# Example : rol RA
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# ASL     1    1    1    1    Rsd  Rsd  X    X    X    X    X    0    0    1    0    0
+# RTL : Rsd <- Rsd(14:0) || 0
+# Example : asl RB
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# ROR     1    1    1    1    Rsd  Rsd  X    X    X    X    X    1    0    1    0    1  -- NOT IMPLEMENTED
+# RTL : Rsd <- Rsd(0) || Rsd(15:1)
+# Example : ror RC
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# ASR     1    1    1    1    Rsd  Rsd  X    X    X    X    X    0    0    1    0    1  -- NOT IMPLEMENTED
+# Rsd <- 0 || Rsd(15:1)
+# Example : asr RD
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# ADD     1    1    1    1    Rd   Rd   Rs   Rs   X    X    X    X    0    1    1    0  -- NOT IMPLEMENTED
+# RTL : Rd <- Rd + Rs
+# Example : add RA RB
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# SUB     1    1    1    1    Rd   Rd   Rs   Rs   X    X    X    X    0    1    1    1  -- NOT IMPLEMENTED
+# Rd <- Rd - Rs
+# Example : sub RC RD
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# AND     1    1    1    1    Rd   Rd   Rs   Rs   X    X    X    X    1    0    0    0  -- NOT IMPLEMENTED
+# Rd <- Rd & Rs
+# Example : and RA RB
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# OR      1    1    1    1    Rd   Rd   Rs   Rs   X    X    X    X    1    0    0    1  -- NOT IMPLEMENTED
+# Rd <- Rd | Rs
+# Example : or RA RB
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# XOR     1    1    1    1    Rd   Rd   Rs   Rs   X    X    X    X    1    0    1    0  -- NOT IMPLEMENTED
+# Rd <- Rd ^ Rs
+# Example : xor RA RB
+
+Opcode 1111 1011  - NU if you can think of something useful do suggest
+Opcode 1111 1100  - NU if you can think of something useful do suggest
+Opcode 1111 1101  - NU if you can think of something useful do suggest
+Opcode 1111 1110  - NU if you can think of something useful do suggest
+
+# INSTR   IR15 IR14 IR13 IR12 IR11 IR10 IR09 IR08 IR07 IR06 IR05 IR04 IR03 IR02 IR01 IR00  
+# XOP2      1    1    1    1    Rd   Rd   Rs   Rs   K    K    K    K    1    1    1    1  -- NOT IMPLEMENTED
+# RTL : student defined, but register addressing mode
+# Example : xop2 ra rb

@@ -1,0 +1,98 @@
+body {
+    background-color: #222;
+    color:white;
+}
+#app {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+textarea {
+    background-color: #AAA;
+}
+#lineNums, #labels, #code, #memory, #registers, #widgets{
+    float:left;
+}
+#lineNums{padding-top: 3px;}
+#controls{
+    padding:5px;
+}
+.container{
+    max-width: 100vw;
+}
+pre {
+    font-size: 1em;
+    padding-right: 5px;
+    user-select: none;
+}
+
+#mem {
+    height:60%;
+    overflow-y: scroll;
+}
+#stack {
+    height:30%;
+    overflow-y: scroll;
+}
+#editor {
+    height:100%;
+    overflow-y: scroll;
+}
+
+#memory {
+    padding-right: 10px;
+}
+
+#mem::-webkit-scrollbar, #stack::-webkit-scrollbar {
+    display: none;
+}
+
+td {
+    padding: 5px;
+}
+
+#IDE, #rightPane {
+    height:100vh;
+}
+#IDE {
+    max-width: 460px;
+    min-width: 450px;
+}
+
+.btn:focus,
+.btn:active{
+    box-shadow:none !important;
+    outline:0px !important;
+}
+
+.widget {
+    width: 400px;
+    height: 300px;
+    background-color: black;
+    margin:20px;
+}
+
+.isBP{
+    background-color: red;
+}
+
+.bp{
+    cursor: pointer;
+}
+
+.slide-fade-enter-active {
+    transition: all .1s ease;
+}
+.slide-fade-leave-active {
+    transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to
+    /* .slide-fade-leave-active for <2.1.8 */ {
+    transform: translateX(10px);
+    opacity: 0;
+}
+
+.selected {
+    background-color: white;
+    color: black;
+}
