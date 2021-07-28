@@ -5,8 +5,9 @@ const isBin = /^0b[01]+$/
 const RTL_GRAMMAR = `\
 program ::= action | conditional
 conditional ::= "IF " condition " " action " ELSE " action
-action ::= increment | assignment
+action ::= increment | assignment | slice_assign
 increment ::= location "++"
+slice_assign ::= location slice " <- " expression
 assignment ::= location " <- " expression
 
 condition ::= flag comparator bin
@@ -14,6 +15,7 @@ expression ::= value expr_ext?
 expr_ext ::= " " op " " value
 value ::= arg | bin | location
 location ::= memory | register
+slice ::= "[" number ":" number "]"
 
 arg ::= "AA" | "KK"
 memory ::= "M[" mem_addr "]"
@@ -24,7 +26,9 @@ specreg ::= "RD" | "RS"
 flag ::= "Z" | "C"
 bin ::= "1" | "0"
 comparator ::= "="
-op ::= "+" | "-" | "&" | "|"`
+op ::= "+" | "-" | "&" | "|"
+number ::= digit*
+digit ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"`
 // Imported from bnf-parser node module bundle
 const BNF = BNFParser
 
@@ -80,6 +84,10 @@ class CPU_SIM {
         this.C = 0
         this.STACK = []
         this.SP = 4095
+    }
+
+    mask(from, to){
+        return (1<<(from+1))-(1<<(to))
     }
 
     // Generate helper data to make compiling and running code
@@ -282,6 +290,12 @@ ${res.slice(0, -1)}
                 let expression = this.translate(node.tokens[2][0])
                 return `${location} = (${expression})`
             
+            case "slice_assign":
+                let location1 = this.translate(node.tokens[0][0])
+                let slice = this.translate(node.tokens[1][0])
+                let expression1 = this.translate(node.tokens[3][0])
+                return `${location1} = (${location1} & ${this.mask(slice[0],slice[1])} || (((${expression1}) & ${this.mask(slice[0]-slice[1],0)}) << ${slice[1]}))`
+            
             case "increment":      // location, literal
                 console.log("INCREMENT", node)
                 let location2 = this.translate(node.tokens[0][0])
@@ -333,6 +347,16 @@ ${res.slice(0, -1)}
 
             case "bin":
                 return node.tokens
+            
+            case "slice":
+                console.log(node)
+                return [this.translate(node.tokens[1][0]), this.translate(node.tokens[3][0])]
+            
+            case "sliceAss":
+                return node.tokens
+            
+            case "number":
+                return node.tokens[0].map(x => x.tokens).join("")
             
             default:
                 console.error("Unrecognised type: " + node.type + " in node", node)

@@ -135,7 +135,7 @@ var SIMPLE_CPU = [
             op: 0xF003,
             mask: 'OOOODDSS____OOOO'
         },
-        rtl: "RD <- RS(7:0) || 0"
+        rtl: "RD[12:0] <- RS"
     }
 ]
 
