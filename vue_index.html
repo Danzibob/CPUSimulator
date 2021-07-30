@@ -119,14 +119,18 @@
                             <div style="white-space:nowrap">
                                 <label for="opCodeInput">OP Code:</label>
                                 <input type="text" id="opCodeInput" v-model="currentInstruction.format.op"/>
+                                <p v-if="!opCodeFits">Specified OP-Code doesn't fit into the instruction format!</p>
                             </div>
                         </div>
 
                         <!-- Instruction Format Box -->
                         <div class="row">
                             <!-- Some fancy flexboxy shizz -->
-                            <div style="height: 40px; background-color: royalblue; margin: 10px">
+                            <div style="background-color: royalblue; margin: 10px">
                                 {{currentInstruction.format.mask}}
+                                <input type="text" v-model="currentInstruction.format.mask" style="font-family: monospace;"
+                                 v-bind:class="currentInstruction.format.mask.length == 16 ? '' : 'InputError'"/>
+                                <p v-if="currentInstruction.format.mask.length != 16">Instruction format must be 16 bits long!</p>
                             </div>
                         </div>
 
@@ -149,13 +153,18 @@
                         <hr>
                         <!-- RTL Entry -->
                         <div class="row">
-                            <textarea style="margin:10px; font-family: monospace;" rows="8" v-model="currentInstruction.rtl"></textarea>
+                            <textarea style="margin:10px; font-family: monospace;" 
+                                      rows="8" v-model="currentInstruction.rtl"
+                                      v-bind:class="validRTL ? '' : 'InputError'">
+                            </textarea>
+                            <p v-if="!validRTL">Errors on line(s): {{errors.join(", ")}}</p>
                         </div>
                         <!-- Save button -->
                         <div class="row">
                             <button class="btn btn-primary" 
                                     style="margin: 10px; width: 100%;"
                                     onclick="alert('not implemented!')"
+                                    :disabled="!validRTL || !opCodeFits || currentInstruction.format.mask.length != 16"
                             >Update Instruction</button>
                         </div>
                     </div>

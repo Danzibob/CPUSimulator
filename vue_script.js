@@ -68,6 +68,10 @@ var app = new Vue({
         hx: toHex,
         bn: toBin,
 
+        // Parser
+        parser: BNFParser.Build(RTL_GRAMMAR),
+        errors: []
+
     },
     computed: {
         args: function(){
@@ -89,6 +93,32 @@ var app = new Vue({
                 ptr = end
             }
             return args
+        },
+        validRTL: function(){
+            let lines = this.currentInstruction.rtl.split("\n")
+            // Check if RTL parses correctly
+            // (may need to recompile grammar on demand later, probs not in this func tho)
+            this.errors = []
+            for(let l in lines){
+                if(lines[l].length <= 1) continue
+                let AST = BNFParser.Parse(lines[l], this.parser)
+                if(AST.hasError || AST.isPartial){
+                    this.errors.push(parseInt(l)+1)
+                }
+            }
+            return this.errors.length == 0
+        },
+        opCodeFits: function(){
+            let opcode = parseInt(this.currentInstruction.format.op).toString(2).padStart(16,'0')
+            if(opcode.length > 16) return false
+            let mask = this.currentInstruction.format.mask
+            console.log(opcode)
+            console.log(mask)
+            for(let i=0; i<16; i++){
+                console.log((opcode[i] == '1'),  (mask[i] != 'O'))
+                if((opcode[i] == '1') && (mask[i] != 'O')) return false
+            }
+            return true
         }
     },
     methods: {
@@ -136,7 +166,6 @@ var app = new Vue({
             this.currentInstruction = Object.assign({}, SIMPLE_CPU[this.selectedInstruction])
             console.log(this.selectedInstruction)
             console.log(this.args)
-        },
-
+        }
     }
 })
