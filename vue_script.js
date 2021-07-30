@@ -42,6 +42,11 @@ var app = new Vue({
         instructions: SIMPLE_CPU,
         selectedInstruction: 0,
         currentInstruction: Object.assign({}, SIMPLE_CPU[0]),
+        opcodetext: {
+            bin: SIMPLE_CPU[0].format.op.toString(2).padStart(16,'0'),
+            dec: SIMPLE_CPU[0].format.op.toString(10),
+            hex: SIMPLE_CPU[0].format.op.toString(16).padStart(4,'0')
+        },
 
         // Assembly Editor
         lineNums: Array.from({length:4096},(_,k)=>k),
@@ -164,8 +169,28 @@ var app = new Vue({
             // Get number of selected instruction
             this.selectedInstruction = parseInt(event.srcElement.attributes.value.value)
             this.currentInstruction = Object.assign({}, SIMPLE_CPU[this.selectedInstruction])
-            console.log(this.selectedInstruction)
-            console.log(this.args)
+            let val = this.currentInstruction.format.op
+            this.opcodetext.hex = val.toString(16).padStart(4,'0')
+            this.opcodetext.dec = val.toString(10)
+            this.opcodetext.bin = val.toString(2).padStart(16,'0')
+        },
+        updateOpBin: function(event){
+            let val = parseInt(this.opcodetext.bin,2)
+            this.opcodetext.hex = val.toString(16).padStart(4,'0')
+            this.opcodetext.dec = val.toString(10)
+            this.currentInstruction.format.op = val
+        },
+        updateOpDec: function(event){
+            let val = parseInt(this.opcodetext.dec,10)
+            this.opcodetext.hex = val.toString(16).padStart(4,'0')
+            this.opcodetext.bin = val.toString(2).padStart(16,'0')
+            this.currentInstruction.format.op = val
+        },
+        updateOpHex: function(event){
+            let val = parseInt(this.opcodetext.hex,16)
+            this.opcodetext.bin = val.toString(2).padStart(16,'0')
+            this.opcodetext.dec = val.toString(10)
+            this.currentInstruction.format.op = val
         }
     }
 })
