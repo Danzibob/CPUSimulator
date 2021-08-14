@@ -17,7 +17,7 @@ value ::= arg | bin | location
 location ::= memory | register
 slice ::= "[" number ":" number "]"
 
-arg ::= "AA" | "KK"
+arg ::= "AA" | "BB" | "CC" | "DD" | "EE" | "FF" | "GG" | "HH" | "II" | "JJ" | "KK" | "LL" | "MM" | "NN" | "OO" | "PP" | "QQ" | "RR" | "SS" | "TT" | "UU" | "VV" | "WW" | "XX" | "YY" | "ZZ"
 memory ::= "M[" mem_addr "]"
 mem_addr ::= register | arg
 register ::= "PC" | "SP" | reg | specreg
@@ -335,7 +335,7 @@ ${res.slice(0, -1)}
             case "value":           // location | arg
                 return this.translate(node.tokens[0])
             
-            case "conditional":     // "IF " condition " " assignment
+            case "conditional":     // IF " " condition " " assignment
                 return `if (${this.translate(node.tokens[1][0])}) ${this.translate(node.tokens[3][0])}\n`
                      + `\telse ${this.translate(node.tokens[5][0])}`
             case "condition":       // flag comparator bin

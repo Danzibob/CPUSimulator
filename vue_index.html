@@ -140,11 +140,11 @@
                             <!-- Length, min-max, a colour or smth idk -->
                             <table style="margin:10px">
                                 <template v-for="(val,k) in args">
-                                    <tr>
+                                    <tr v-if="k != '__'">
                                         <td>{{k}}</td>
                                         <td>{{val.width}} bits</td>
-                                        <td>{{val.max}}</td>
-                                        <td><input type="text" value="" style="width:30px"></td>
+                                        <td><span v-if="k != 'OP'">0 - {{val.max}}</span></td>
+                                        <td><button class="btn btn-secondary" style="font-family: monospace;" v-if="k != 'OP'">{{k}}</button></td>
                                     </tr>
                                 </template>
                             </table>

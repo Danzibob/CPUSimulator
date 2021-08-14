@@ -78,18 +78,24 @@ var app = new Vue({
             // Selects contiguous sections of letters from an instruction mask
             // with special treatment for the op-code (O)
             let code = this.currentInstruction.format.mask
+            console.log(this.currentInstruction)
             let args = {}
             let ptr = 0
             let end = 0
             while (ptr < code.length){
                 // Move end pointer to the end of this segment
                 while(code[end] == code[ptr]) end++
+
                 // If the letter is O, special case and find the rest of the op code
                 if(code[ptr] == "O"){
-                    args["OP"] = {mask: code.replace(/[A-Z]/gi, m => m=="O" ? "O" : "_")}
+                    args["OP"] = {mask: code.replace(/[A-Z]/gi, m => m=="O" ? "O" : "_"), width: code.match(/O/g).length}
+                } else if ((code[ptr] == "S") || (code[ptr] == "D")) {
+                    args["R" + code[ptr]] = {width: end - ptr, max: (Math.pow(2,end-ptr)).toString()}
                 } else {
-                    args[code[ptr]] = {width: end - ptr, max: (Math.pow(2,end-ptr)).toString()}
+                    args[code[ptr]+code[ptr]] = {width: end - ptr, max: (Math.pow(2,end-ptr)).toString()}
                 }
+
+                // Move pointer to next segment
                 ptr = end
             }
             return args
