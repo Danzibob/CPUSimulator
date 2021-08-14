@@ -116,9 +116,11 @@
                         <!-- Op code entry -->
                         <div class="row">
                             <h2>{{currentInstruction.names[0]}}</h2>
-                            <div style="white-space:nowrap">
-                                <label for="opCodeInput">OP Code:</label>
-                                <input type="text" id="opCodeInput" v-model="currentInstruction.format.op"/>
+                            <div style="white-space:nowrap; font-family: monospace;">
+                                <label>OP Code:</label> <br>
+                                <input type="text" id="opCodeBin" v-on:input="updateOpBin" v-model="opcodetext.bin"/> <br>
+                                <input type="text" id="opCodeHex" v-on:input="updateOpHex" v-model="opcodetext.hex"/> <br>
+                                <input type="text" id="opCodeDec" v-on:input="updateOpDec" v-model="opcodetext.dec"/> <br>
                                 <p v-if="!opCodeFits">Specified OP-Code doesn't fit into the instruction format!</p>
                             </div>
                         </div>

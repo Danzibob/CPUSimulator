@@ -13,7 +13,7 @@ assignment ::= location " <- " expression
 condition ::= flag comparator bin
 expression ::= value expr_ext?
 expr_ext ::= " " op " " value
-value ::= arg | bin | location
+value ::= arg | bin | location slice?
 location ::= memory | register
 slice ::= "[" number ":" number "]"
 
@@ -333,7 +333,15 @@ ${res.slice(0, -1)}
                 return ` ${OpDict[node.tokens[1][0].tokens]} ${this.translate(node.tokens[3][0])}`
             
             case "value":           // location | arg
-                return this.translate(node.tokens[0])
+                console.log(node.tokens)
+                let val = this.translate(node.tokens[0][0].tokens[0])
+                if(node.tokens[1].length != 0){
+                    let sli = this.translate(node.tokens[1][0])
+                    console.log("slice", sli)
+                    return `((${val} >> ${sli[1]}) & ${(1 << (sli[0]+2))-1})`
+                } else {
+                    return val
+                }
             
             case "conditional":     // IF " " condition " " assignment
                 return `if (${this.translate(node.tokens[1][0])}) ${this.translate(node.tokens[3][0])}\n`

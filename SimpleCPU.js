@@ -132,10 +132,10 @@ var SIMPLE_CPU = [
     // Might not even be implemented
     {   names: ["ROL"],
         format: {
-            op: 0xF003,
+            op: 0xF004,
             mask: 'OOOODDSS____OOOO'
         },
-        rtl: "RD[12:0] <- RS"
+        rtl: "RD[15:8] <- RS[7:0]"
     }
 ]
 
