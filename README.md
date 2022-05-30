@@ -31,7 +31,9 @@ In this view, instruction OP codes, formats and RTL can be viewed, and error che
 
 ### Instructions Definitions
 
-In the project files, `SimpleCPU.js` holds the instruction definitions for the default CPU architecture. An example of an instruction definition would look something like this:
+In the project files, `SimpleCPU.js` holds the instruction definitions for the default CPU architecture. This is where you can change and add instructions.
+
+An example of an instruction definition would look something like this:
 
 ```javascript
 {   names: ["SUB","SUBI"],
