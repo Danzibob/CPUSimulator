@@ -37,6 +37,7 @@ pre {
 #editor {
     height:100%;
     overflow-y: scroll;
+    width:max-content;
 }
 
 #memory {

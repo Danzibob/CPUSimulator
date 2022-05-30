@@ -145,7 +145,7 @@ STORE arg1
 MOVE RA 6
 STORE arg2
 CALL multiply
-JUMP 5
+JUMP 0
 
 
 
