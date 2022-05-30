@@ -33,7 +33,7 @@ In this view, instruction OP codes, formats and RTL can be viewed, and error che
 
 In the project files, `SimpleCPU.js` holds the instruction definitions for the default CPU architecture. An example of an instruction definition would look something like this:
 
-```json
+```javascript
 {   names: ["SUB","SUBI"],
     format: {
         op: 0x2000,
@@ -71,7 +71,7 @@ There are some reserved keywords in this language in particular which are listed
 
 The language also has support for increments `++` and IF ELSE statements, as demonstrated in the `JUMPZ` instruction
 
-```json
+```javascript
 {   names: ["JUMPZ","JMPZ"],
     format: {
         op: 0x9000,
